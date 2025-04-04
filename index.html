@@ -1,0 +1,239 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Ori Hub",
+   LoadingTitle = "Script Loading...",
+   LoadingSubtitle = "By orinix101",
+   ConfigurationSaving = {
+      Enabled = false,
+      FolderName = nil,
+      FileName = "Ori Hub"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "https://discord.gg/XwRYDH2qEv",
+      RememberJoins = true
+   },
+})
+
+local MainTab = Window:CreateTab("🏠 Main", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Main")
+
+Rayfield:Notify({
+   Title = "Execution Complete",
+   Content = "Loading your script - credits to wetwipes for teaching",
+   Duration = 5,
+   Image = 13047715178,
+   Actions = { 
+      Ignore = {
+         Name = "Okay!",
+         Callback = function()
+            print("The user tapped Okay!")
+         end
+      },
+   },
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Aimbot - By Ori",
+   Callback = function()
+      game.StarterGui:SetCore("SendNotification", {Title="T9 Hub"; Text="Aimbot Right Click Activated!"; Duration=5;})
+
+      local PLAYER = game.Players.LocalPlayer
+      local MOUSE = PLAYER:GetMouse()
+      local CC = game.Workspace.CurrentCamera
+
+      local ENABLED = false
+
+      _G.FREE_FOR_ALL = true
+      _G.CHANGE_AIM = 'q'
+      _G.AIM_AT = 'Head'
+
+      wait(1)
+
+      function GetNearestPlayerToMouse()
+         local PLAYERS = {}
+         local PLAYER_HOLD = {}
+         local DISTANCES = {}
+         for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= PLAYER then
+               table.insert(PLAYERS, v)
+            end
+         end
+         for _, v in pairs(PLAYERS) do
+            if _G.FREE_FOR_ALL == false then
+               if v and v.Character and v.TeamColor ~= PLAYER.TeamColor then
+                  local AIM = v.Character:FindFirstChild(_G.AIM_AT)
+                  if AIM then
+                     local DISTANCE = (AIM.Position - CC.CFrame.p).Magnitude
+                     local RAY = Ray.new(CC.CFrame.p, (MOUSE.Hit.p - CC.CFrame.p).unit * DISTANCE)
+                     local HIT, POS = game.Workspace:FindPartOnRay(RAY, game.Workspace)
+                     local DIFF = math.floor((POS - AIM.Position).Magnitude)
+                     PLAYER_HOLD[v.Name] = {dist = DISTANCE, plr = v, diff = DIFF}
+                     table.insert(DISTANCES, DIFF)
+                  end
+               end
+            elseif _G.FREE_FOR_ALL == true then
+               local AIM = v.Character:FindFirstChild(_G.AIM_AT)
+               if AIM then
+                  local DISTANCE = (AIM.Position - CC.CFrame.p).Magnitude
+                  local RAY = Ray.new(CC.CFrame.p, (MOUSE.Hit.p - CC.CFrame.p).unit * DISTANCE)
+                  local HIT, POS = game.Workspace:FindPartOnRay(RAY, game.Workspace)
+                  local DIFF = math.floor((POS - AIM.Position).Magnitude)
+                  PLAYER_HOLD[v.Name] = {dist = DISTANCE, plr = v, diff = DIFF}
+                  table.insert(DISTANCES, DIFF)
+               end
+            end
+         end
+
+         if #DISTANCES == 0 then
+            return false
+         end
+
+         local L_DISTANCE = math.min(unpack(DISTANCES))
+         if L_DISTANCE > 20 then
+            return false
+         end
+
+         for _, v in pairs(PLAYER_HOLD) do
+            if v.diff == L_DISTANCE then
+               return v.plr
+            end
+         end
+         return false
+      end
+
+      local GUI_MAIN = Instance.new('ScreenGui', game.CoreGui)
+      local GUI_TARGET = Instance.new('TextLabel', GUI_MAIN)
+      local GUI_AIM_AT = Instance.new('TextLabel', GUI_MAIN)
+      local GUI_CREDIT = Instance.new('TextLabel', GUI_MAIN) -- New TextLabel for "Made by Ori"
+
+      GUI_MAIN.Name = 'AIMBOT'
+
+      GUI_TARGET.Size = UDim2.new(0, 200, 0, 30)
+      GUI_TARGET.BackgroundTransparency = 0.5
+      GUI_TARGET.BackgroundColor = BrickColor.new('Fossil')
+      GUI_TARGET.BorderSizePixel = 0
+      GUI_TARGET.Position = UDim2.new(0.5, -100, 0, 0)
+      GUI_TARGET.Text = 'AIMBOT : OFF'
+      GUI_TARGET.TextColor3 = Color3.new(1, 1, 1)
+      GUI_TARGET.TextStrokeTransparency = 1
+      GUI_TARGET.TextWrapped = true
+      GUI_TARGET.FontSize = 'Size24'
+      GUI_TARGET.Font = 'SourceSansBold'
+
+      GUI_AIM_AT.Size = UDim2.new(0, 200, 0, 20)
+      GUI_AIM_AT.BackgroundTransparency = 0.5
+      GUI_AIM_AT.BackgroundColor = BrickColor.new('Fossil')
+      GUI_AIM_AT.BorderSizePixel = 0
+      GUI_AIM_AT.Position = UDim2.new(0.5, -100, 0, 30)
+      GUI_AIM_AT.Text = 'AIMING : HEAD'
+      GUI_AIM_AT.TextColor3 = Color3.new(1, 1, 1)
+      GUI_AIM_AT.TextStrokeTransparency = 1
+      GUI_AIM_AT.TextWrapped = true
+      GUI_AIM_AT.FontSize = 'Size18'
+      GUI_AIM_AT.Font = 'SourceSansBold'
+
+      -- New TextLabel for "Made by Ori"
+      GUI_CREDIT.Size = UDim2.new(0, 200, 0, 20)
+      GUI_CREDIT.BackgroundTransparency = 0.5
+      GUI_CREDIT.BackgroundColor = BrickColor.new('Fossil')
+      GUI_CREDIT.BorderSizePixel = 0
+      GUI_CREDIT.Position = UDim2.new(0.5, -100, 0, 50)
+      GUI_CREDIT.Text = 'MADE BY ORI'
+      GUI_CREDIT.TextColor3 = Color3.new(1, 1, 1)
+      GUI_CREDIT.TextStrokeTransparency = 1
+      GUI_CREDIT.TextWrapped = true
+      GUI_CREDIT.FontSize = 'Size18'
+      GUI_CREDIT.Font = 'SourceSansBold'
+
+      MOUSE.Button2Down:Connect(function()
+         ENABLED = true
+      end)
+
+      MOUSE.Button2Up:Connect(function()
+         ENABLED = false
+      end)
+
+      MOUSE.KeyDown:Connect(function(KEY)
+         if KEY == _G.CHANGE_AIM then
+            if _G.AIM_AT == 'Head' then
+               _G.AIM_AT = 'Torso'
+               GUI_AIM_AT.Text = 'AIMING : TORSO'
+            elseif _G.AIM_AT == 'Torso' then
+               _G.AIM_AT = 'Head'
+               GUI_AIM_AT.Text = 'AIMING : HEAD'
+            end
+         end
+      end)
+
+      game:GetService('RunService').RenderStepped:Connect(function()
+         if ENABLED then
+            local TARGET = GetNearestPlayerToMouse()
+            if TARGET and TARGET.Character then
+               local AIM = TARGET.Character:FindFirstChild(_G.AIM_AT)
+               if AIM then
+                  CC.CFrame = CFrame.new(CC.CFrame.p, AIM.CFrame.p)
+               end
+               GUI_TARGET.Text = 'AIMBOT : ' .. TARGET.Name:sub(1, 5)
+            else
+               GUI_TARGET.Text = 'AIMBOT : OFF'
+            end
+         end
+      end)
+   end,
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Chams - Players Only",
+   Callback = function()
+      game.StarterGui:SetCore("SendNotification", {Title="Ori Hub"; Text="Chams Activated!"; Duration=5;})
+
+      -- Ensure the notify function exists
+      local function notify(title, message)
+         game.StarterGui:SetCore("SendNotification", {Title = title; Text = message; Duration = 5;})
+      end
+
+      -- Function to apply chams to a player's character
+      local function applyChams(player)
+         if player.Character then
+            for _, part in pairs(player.Character:GetDescendants()) do
+               if part:IsA("BasePart") and not part:FindFirstChild("Chams") then
+                  local highlight = Instance.new("BoxHandleAdornment")
+                  highlight.Name = "Chams"
+                  highlight.Adornee = part
+                  highlight.AlwaysOnTop = true
+                  highlight.ZIndex = 10
+                  highlight.Size = part.Size + Vector3.new(0.1, 0.1, 0.1)
+                  highlight.Color3 = Color3.new(1, 0, 0) -- Red color
+                  highlight.Transparency = 0.5
+                  highlight.Parent = part
+               end
+            end
+         end
+      end
+
+      -- Function to handle chams for all players
+      local function updateChams()
+         for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+            if player ~= game.Players.LocalPlayer then
+               applyChams(player)
+               -- Listen for character respawn
+               player.CharacterAdded:Connect(function()
+                  applyChams(player)
+               end)
+            end
+         end
+      end
+
+      -- Start a loop to continuously apply chams
+      task.spawn(function()
+         while true do
+            updateChams()
+            wait(1) -- Adjust the delay as needed
+         end
+      end)
+
+      notify("Chams", "Chams activated for all players.")
+   end,
+})
